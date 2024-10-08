@@ -541,18 +541,22 @@
             if (this.playing) {
                 this.clearCanvas();
         
-                        // Calculate speed reduction based on circadian rhythm and sleep pressure
-                let circadianSpeedEffect = (this.circadianRhythm / 100) * 0.1; // Max 10% speed reduction
-                let sleepPressureSpeedEffect = (this.sleepPressure / 100) * 0.5; // Max 50% speed reduction
+                                // Calculate limiting effects based on circadian rhythm and sleep pressure
+                let circadianSpeedEffect = (this.circadianRhythm / 100) * 0.1; // Max 10% reduction in potential speed
+                let sleepPressureSpeedEffect = (this.sleepPressure / 100) * 0.5; // Max 50% reduction in potential speed
                 
-                // Combine the effects (additive) with a max cap of 1 (i.e., 100% reduction)
-                let totalSpeedReduction = Math.min(circadianSpeedEffect + sleepPressureSpeedEffect, 0.5); // Max total reduction capped at 35%
+                // Combine the effects, additive with a max cap of 0.5 (i.e., 50% total block)
+                let totalSpeedReduction = Math.min(circadianSpeedEffect + sleepPressureSpeedEffect, 0.5); // Max limit at 50%
                 
-                // Final speed scaling factor (1 - total reduction)
-                let speedScaleFactor = 1 - totalSpeedReduction;
+                // Calculate the maximum speed potential without reduction
+                let potentialSpeed = this.config.SPEED + (this.distanceRan / 1000); // Speed increases with distance ran
                 
-                // Update the current speed based on the scale factor
-                this.currentSpeed = 3 + ((this.currentSpeed - 3) * speedScaleFactor);
+                // Apply the debuff (reduce the potential max speed, but don’t slow down the player)
+                let maxAllowedSpeed = potentialSpeed * (1 - totalSpeedReduction);
+                
+                // Gradual acceleration based on how close the current speed is to the max allowed speed
+                let dynamicAcceleration = Math.max((maxAllowedSpeed - this.currentSpeed) * this.config.ACCELERATION, 0.01); // Ensure it's not zero
+
 
                 this.canvasCtx.fillStyle = '#000';
                 this.canvasCtx.font = '16px Arial';
@@ -611,7 +615,7 @@
                     this.distanceRan += this.currentSpeed * deltaTime / this.msPerFrame;
 
                     if (this.currentSpeed < this.config.MAX_SPEED) {
-                        this.currentSpeed += this.config.ACCELERATION;
+                        this.currentSpeed += dynamicAcceleration;
                     }
                 } else {
                     this.gameOver();

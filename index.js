@@ -542,17 +542,17 @@
                 this.clearCanvas();
         
                         // Calculate speed reduction based on circadian rhythm and sleep pressure
-                let circadianSpeedEffect = (this.circadianRhythm / 100) * 0.05; // Max 5% speed reduction
-                let sleepPressureSpeedEffect = (this.sleepPressure / 100) * 0.3; // Max 30% speed reduction
+                let circadianSpeedEffect = (this.circadianRhythm / 100) * 0.1; // Max 10% speed reduction
+                let sleepPressureSpeedEffect = (this.sleepPressure / 100) * 0.5; // Max 50% speed reduction
                 
                 // Combine the effects (additive) with a max cap of 1 (i.e., 100% reduction)
-                let totalSpeedReduction = Math.min(circadianSpeedEffect + sleepPressureSpeedEffect, 0.35); // Max total reduction capped at 35%
+                let totalSpeedReduction = Math.min(circadianSpeedEffect + sleepPressureSpeedEffect, 0.5); // Max total reduction capped at 35%
                 
                 // Final speed scaling factor (1 - total reduction)
                 let speedScaleFactor = 1 - totalSpeedReduction;
                 
                 // Update the current speed based on the scale factor
-                this.currentSpeed = this.config.SPEED * speedScaleFactor;
+                this.currentSpeed = 3 + ((this.config.SPEED - 3) * speedScaleFactor);
 
                 this.canvasCtx.fillStyle = '#000';
                 this.canvasCtx.font = '16px Arial';
@@ -1019,10 +1019,10 @@
         var randomValue = Math.random(); // Returns a value between 0 and 1
     
         // Assign probabilities based on ranges
-        if (randomValue < 0.7) {
-                return 0; // 70% chance for type 0
-            } else if (randomValue < 0.8) {
-                return 1; // 10% chance for type 1
+        if (randomValue < 0.8) {
+                return 1; // 70% chance for type 0
+            } else if (randomValue < 0.95) {
+                return 0; // 10% chance for type 1
             } else {
                 return 2; // 20% chance for type 2
         }

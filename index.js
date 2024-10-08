@@ -542,12 +542,15 @@
                 this.clearCanvas();
         
                         // Calculate speed reduction based on circadian rhythm and sleep pressure
-                let circadianSpeedEffect = 1 - (this.circadianRhythm / 100) * 0.1; // Max 10% speed reduction
-                let sleepPressureSpeedEffect = 1 - (this.sleepPressure / 100) * 0.5; // Max 50% speed reduction
-        
-                // Final speed scaling factor (the product of both effects)
-                let speedScaleFactor = Math.min(circadianSpeedEffect * sleepPressureSpeedEffect, 1);
-        
+                let circadianSpeedEffect = (this.circadianRhythm / 100) * 0.05; // Max 5% speed reduction
+                let sleepPressureSpeedEffect = (this.sleepPressure / 100) * 0.3; // Max 30% speed reduction
+                
+                // Combine the effects (additive) with a max cap of 1 (i.e., 100% reduction)
+                let totalSpeedReduction = Math.min(circadianSpeedEffect + sleepPressureSpeedEffect, 0.35); // Max total reduction capped at 35%
+                
+                // Final speed scaling factor (1 - total reduction)
+                let speedScaleFactor = 1 - totalSpeedReduction;
+                
                 // Update the current speed based on the scale factor
                 this.currentSpeed = this.config.SPEED * speedScaleFactor;
 

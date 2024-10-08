@@ -35,6 +35,9 @@
         this.distanceMeter = null;
         this.distanceRan = 0;
 
+        this.circadianRhythm = 0;
+        this.sleepPressure = 0;
+
         this.highestScore = 0;
 
         this.time = 0;
@@ -538,12 +541,27 @@
             if (this.playing) {
                 this.clearCanvas();
 
+                this.canvasCtx.fillStyle = '#000';
+                this.canvasCtx.font = '16px Arial';
+                this.canvasCtx.fillText('Circadian Rhythm: ' + Math.floor(this.circadianRhythm), 10, 20);
+                this.canvasCtx.fillText('Sleep Pressure: ' + Math.floor(this.sleepPressure), 10, 40);
+
                 if (this.tRex.jumping) {
                     this.tRex.updateJump(deltaTime);
                 }
 
                 this.runningTime += deltaTime;
                 var hasObstacles = this.runningTime > this.config.CLEAR_TIME;
+
+                // Update circadian rhythm (0 to 100 to 0 in a 20-second loop)
+                var circadianTime = this.runningTime % 20000; // 20 seconds = 20000 ms
+                this.circadianRhythm = circadianTime <= 10000 
+                    ? (circadianTime / 10000) * 100 // Increasing from 0 to 100
+                    : 100 - ((circadianTime - 10000) / 10000) * 100; // Decreasing from 100 to 0
+                
+                // Increase sleep pressure by 2 per second
+                this.sleepPressure += deltaTime * 0.002; // 2 per second (deltaTime is in ms)
+
 
                 // First jump triggers the intro.
                 if (this.tRex.jumpCount == 1 && !this.playingIntro) {

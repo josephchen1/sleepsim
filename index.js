@@ -554,14 +554,14 @@
                     
                     // If both sleep pressure and circadian rhythm are high, double the negative acceleration
                     if (this.sleepPressure > 50 && this.circadianRhythm > 80) {
-                        reductionFactor = 1.5;
+                        reductionFactor = 1.3;
                     }
                 
                     // Apply negative acceleration with the combined effect of sleep pressure and circadian rhythm
                     dynamicAcceleration = -1 * reductionFactor * baseAcceleration;
                 } else {
                     // Gradual acceleration towards maxAllowedSpeed
-                    dynamicAcceleration = baseAcceleration
+                    dynamicAcceleration = baseAcceleration;
                 }
                 
                 // Update the current speed by applying the calculated acceleration

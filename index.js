@@ -561,7 +561,10 @@
 
                 // Check for collisions.
                 var collision = hasObstacles &&
-                    checkForCollision(this.horizon.obstacles[0], this.tRex);
+                    checkForCollision(this.horizon.obstacles[0], this.tRex) && 
+                    (checkObstacleType(this.horizon.obstacles[0]) == "CACTUS_LARGE");
+
+                console.log(collision)
 
                 if (!collision) {
                     this.distanceRan += this.currentSpeed * deltaTime / this.msPerFrame;
@@ -1139,7 +1142,7 @@
      * @return {Array<CollisionBox>}
      */
     function checkForCollision(obstacle, tRex, opt_canvasCtx) {
-        console.log(obstacle);
+        console.log(obstacle.typeConfig.type);
         var obstacleBoxXPos = Runner.defaultDimensions.WIDTH + obstacle.xPos;
 
         // Adjustments are made to the bounding box as there is a 1 pixel white
@@ -1191,6 +1194,9 @@
         return false;
     };
 
+    function checkObstacleType(obstacle) {
+        return obstacle.typeConfig.type;
+    }
 
     /**
      * Adjust the collision box.

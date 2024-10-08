@@ -1848,8 +1848,8 @@
 
                 
                 // Apply jump scaling based on circadian rhythm and sleep pressure
-                let circadianEffect = 1 - (this.runner.circadianRhythm / 100) * 0.1; // Max 10% reduction at circadian rhythm = 100
-                let sleepPressureEffect = 1 - (this.runner.sleepPressure / 100) * 0.5; // Max 50% reduction at sleep pressure = 100
+                let circadianEffect = 1 - (this.circadianRhythm / 100) * 0.1; // Max 10% reduction at circadian rhythm = 100
+                let sleepPressureEffect = 1 - (this.sleepPressure / 100) * 0.5; // Max 50% reduction at sleep pressure = 100
         
                 // Final jump scaling factor is the product of both effects
                 let jumpScaleFactor = Math.min(circadianEffect * sleepPressureEffect, 1);

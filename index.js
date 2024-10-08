@@ -540,6 +540,16 @@
 
             if (this.playing) {
                 this.clearCanvas();
+        
+                        // Calculate speed reduction based on circadian rhythm and sleep pressure
+                let circadianSpeedEffect = 1 - (this.circadianRhythm / 100) * 0.1; // Max 10% speed reduction
+                let sleepPressureSpeedEffect = 1 - (this.sleepPressure / 100) * 0.5; // Max 50% speed reduction
+        
+                // Final speed scaling factor (the product of both effects)
+                let speedScaleFactor = Math.min(circadianSpeedEffect * sleepPressureSpeedEffect, 1);
+        
+                // Update the current speed based on the scale factor
+                this.currentSpeed = this.config.SPEED * speedScaleFactor;
 
                 this.canvasCtx.fillStyle = '#000';
                 this.canvasCtx.font = '16px Arial';
@@ -1835,8 +1845,18 @@
         startJump: function (speed) {
             if (!this.jumping) {
                 this.update(0, Trex.status.JUMPING);
-                // Tweak the jump velocity based on the speed.
-                this.jumpVelocity = this.config.INIITAL_JUMP_VELOCITY - (speed / 10);
+
+                
+                // Apply jump scaling based on circadian rhythm and sleep pressure
+                let circadianEffect = 1 - (this.runner.circadianRhythm / 100) * 0.1; // Max 10% reduction at circadian rhythm = 100
+                let sleepPressureEffect = 1 - (this.runner.sleepPressure / 100) * 0.5; // Max 50% reduction at sleep pressure = 100
+        
+                // Final jump scaling factor is the product of both effects
+                let jumpScaleFactor = Math.min(circadianEffect * sleepPressureEffect, 1);
+        
+                // Tweak the jump velocity based on the scaling factor and the current speed.
+                this.jumpVelocity = (this.config.INIITAL_JUMP_VELOCITY - (speed / 10)) * jumpScaleFactor;
+
                 this.jumping = true;
                 this.reachedMinHeight = false;
                 this.speedDrop = false;

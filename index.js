@@ -1001,6 +1001,19 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    function getWeightedRandomObstacle() {
+    // Generate a random number between 0 and 1
+        var randomValue = Math.random(); // Returns a value between 0 and 1
+    
+        // Assign probabilities based on ranges
+        if (randomValue < 0.7) {
+                return 0; // 70% chance for type 0
+            } else if (randomValue < 0.8) {
+                return 1; // 10% chance for type 1
+            } else {
+                return 2; // 20% chance for type 2
+        }
+    }
 
     /**
      * Vibrate on mobile devices.
@@ -2710,7 +2723,8 @@
          * @param {number} currentSpeed
          */
         addNewObstacle: function (currentSpeed) {
-            var obstacleTypeIndex = getRandomNum(0, Obstacle.types.length - 1);
+            /** var obstacleTypeIndex = getRandomNum(0, Obstacle.types.length - 1); */
+            var obstacleTypeIndex = getWeightedRandomObstacle();
             var obstacleType = Obstacle.types[obstacleTypeIndex];
 
             // Check for multiples of the same type of obstacle.

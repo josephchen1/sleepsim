@@ -582,7 +582,16 @@
                     checkForCollision(this.horizon.obstacles[0], this.tRex) && 
                     (checkObstacleType(this.horizon.obstacles[0]) == "CACTUS_LARGE");
 
-                console.log(collision)
+                var bedCollision = hasObstacles &&
+                     checkForCollision(this.horizon.obstacles[0], this.tRex) && 
+                    (checkObstacleType(this.horizon.obstacles[0]) == "PTERODACTYL");
+                   
+                if (bedCollision) {
+                    tRex.sleepPressure = Math.max(0, tRex.sleepPressure - 30);
+                    bedCollision == False; // Prevent negative values
+                }
+                
+                console.log(bedCollision)
 
                 if (!collision) {
                     this.distanceRan += this.currentSpeed * deltaTime / this.msPerFrame;

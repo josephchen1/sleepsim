@@ -588,7 +588,7 @@
                    
                 if (bedCollision) {
                     this.sleepPressure = Math.max(0, this.sleepPressure - 30);
-                    bedCollision == False; // Prevent negative values
+                    bedCollision = False; // Prevent negative values
                 }
                 
                 console.log(bedCollision)

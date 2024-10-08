@@ -622,7 +622,7 @@
                 
                 // console.log(bedCollision)
                 console.log(this.currentSpeed);
-                console.log(this.dynamicAcceleration);
+                console.log(dynamicAcceleration);
 
                 if (!collision) {
                     this.distanceRan += this.currentSpeed * deltaTime / this.msPerFrame;

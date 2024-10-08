@@ -106,7 +106,7 @@
      * @enum {number}
      */
     Runner.config = {
-        ACCELERATION: 0.01,
+        ACCELERATION: 0.001,
         BG_CLOUD_SPEED: 0.2,
         BOTTOM_PAD: 10,
         CLEAR_TIME: 3000,
@@ -552,7 +552,7 @@
                 let speedScaleFactor = 1 - totalSpeedReduction;
                 
                 // Update the current speed based on the scale factor
-                this.currentSpeed = 3 + ((this.current.SPEED - 3) * speedScaleFactor);
+                this.currentSpeed = 3 + ((this.currentSpeed - 3) * speedScaleFactor);
 
                 this.canvasCtx.fillStyle = '#000';
                 this.canvasCtx.font = '16px Arial';

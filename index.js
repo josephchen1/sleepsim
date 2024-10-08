@@ -543,13 +543,13 @@
 
                 // Calculate
                 let distanceFactor = Math.min(this.distanceRan / 50000, 1); // Scales from 0 to 1 over 2000 distance
-                let baseAcceleration = 0.001 + (0.004 * distanceFactor); // Acceleration increases gradually with distance
+                let baseAcceleration = this.config.ACCELERATION + (0.004 * distanceFactor); // Acceleration increases gradually with distance
                 
                 // Initialize dynamic acceleration
                 let dynamicAcceleration = 0;
                 
                 // If sleep pressure is above 50, start applying negative acceleration
-                if (this.sleepPressure > 50 || this.circadianRhythm > 70) {
+                if (this.sleepPressure > 50 || this.circadianRhythm > 80) {
                     let reductionFactor = 1;
                     
                     // If both sleep pressure and circadian rhythm are high, double the negative acceleration

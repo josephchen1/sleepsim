@@ -604,7 +604,8 @@
                     bedCollision = false; // Prevent negative values
                 }
                 
-                console.log(bedCollision)
+                // console.log(bedCollision)
+                console.log(this.currentSpeed)
 
                 if (!collision) {
                     this.distanceRan += this.currentSpeed * deltaTime / this.msPerFrame;
@@ -1195,7 +1196,7 @@
      * @return {Array<CollisionBox>}
      */
     function checkForCollision(obstacle, tRex, opt_canvasCtx) {
-        console.log(obstacle.typeConfig.type);
+        //console.log(obstacle.typeConfig.type);
         var obstacleBoxXPos = Runner.defaultDimensions.WIDTH + obstacle.xPos;
 
         // Adjustments are made to the bounding box as there is a 1 pixel white
@@ -1860,7 +1861,7 @@
                 // Tweak the jump velocity based on the scaling factor and the current speed.
                 this.jumpVelocity = (this.config.INIITAL_JUMP_VELOCITY - (speed / 10)); // * jumpScaleFactor;
 
-                console.log(this.jumpVelocity)
+                //console.log(this.jumpVelocity)
 
                 this.jumping = true;
                 this.reachedMinHeight = false;

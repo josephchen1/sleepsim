@@ -1857,6 +1857,8 @@
                 // Tweak the jump velocity based on the scaling factor and the current speed.
                 this.jumpVelocity = (this.config.INIITAL_JUMP_VELOCITY - (speed / 10)) * jumpScaleFactor;
 
+                console.log(this.jumpVelocity)
+
                 this.jumping = true;
                 this.reachedMinHeight = false;
                 this.speedDrop = false;

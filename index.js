@@ -540,32 +540,33 @@
 
             if (this.playing) {
                 this.clearCanvas();
-        
-                                // Calculate limiting effects based on circadian rhythm and sleep pressure
-                let circadianSpeedEffect = (this.circadianRhythm / 100) * 0.1; // Max 10% reduction in potential speed
-                let sleepPressureSpeedEffect = (this.sleepPressure / 100) * 0.5; // Max 50% reduction in potential speed
-                
-                // Combine the effects, additive with a max cap of 0.5 (i.e., 50% total block)
-                let totalSpeedReduction = Math.min(circadianSpeedEffect + sleepPressureSpeedEffect, 0.5); // Max limit at 50%
-                
-                // Calculate the maximum speed potential without reduction
-                let potentialSpeed = this.config.SPEED + (this.distanceRan / 1000); // Speed increases with distance ran
 
-                let sleepPressureEffectOnAcceleration = 1 - (this.sleepPressure / 100); 
+                // Calculate
+                let distanceFactor = Math.min(this.distanceRan / 50000, 1); // Scales from 0 to 1 over 2000 distance
+                let baseAcceleration = 0.001 + (0.004 * distanceFactor); // Acceleration increases gradually with distance
                 
-                // Apply the debuff (reduce the potential max speed, but don’t slow down the player)
-                let maxAllowedSpeed = potentialSpeed * (1 - totalSpeedReduction);
-
-                this.currentSpeed = Math.min(this.currentSpeed, maxAllowedSpeed);
-
+                // Initialize dynamic acceleration
                 let dynamicAcceleration = 0;
-                // Gradual acceleration based on how close the current speed is to the max allowed speed
-                if (this.sleepPressure > 50) {
-                    dynamicAcceleration = -1 * (maxAllowedSpeed - this.currentSpeed) * 0.001 * sleepPressureEffectOnAcceleration;
+                
+                // If sleep pressure is above 50, start applying negative acceleration
+                if (this.sleepPressure > 50 || this.circadianRhythm > 70) {
+                    let reductionFactor = 1;
+                    
+                    // If both sleep pressure and circadian rhythm are high, double the negative acceleration
+                    if (this.sleepPressure > 50 && this.circadianRhythm > 80) {
+                        reductionFactor = 1.5;
+                    }
+                
+                    // Apply negative acceleration with the combined effect of sleep pressure and circadian rhythm
+                    dynamicAcceleration = -1 * reductionFactor * baseAcceleration;
                 } else {
-                    dynamicAcceleration = (maxAllowedSpeed - this.currentSpeed) * 0.001 * sleepPressureEffectOnAcceleration;
+                    // Gradual acceleration towards maxAllowedSpeed
+                    dynamicAcceleration = baseAcceleration
                 }
-
+                
+                // Update the current speed by applying the calculated acceleration
+                this.currentSpeed += dynamicAcceleration;
+                
                 this.canvasCtx.fillStyle = '#000';
                 this.canvasCtx.font = '16px Arial';
                 this.canvasCtx.fillText('Circadian Rhythm: ' + Math.floor(this.circadianRhythm), 10, 20);

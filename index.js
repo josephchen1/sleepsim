@@ -613,6 +613,9 @@
                    
                 if (bedCollision) {
                     this.sleepPressure = Math.max(0, this.sleepPressure - 30);
+                    if (this.currentSpeed < this.config.SPEED) {
+                        this.currentSpeed = this.config.SPEED;
+                    }
                     bedCollision = false; // Prevent negative values
                 }
                 

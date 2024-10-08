@@ -570,7 +570,7 @@
                     : 100 - ((circadianTime - 20000) / 20000) * 100; // Decreasing from 100 to 0
                 
                 // Increase sleep pressure by 2 per second
-                this.sleepPressure += deltaTime * 0.002; // 2 per second (deltaTime is in ms)
+                this.sleepPressure = Math.min(this.sleepPressure + deltaTime * 0.002, 100);
 
 
                 // First jump triggers the intro.
@@ -1558,7 +1558,7 @@
             yPos: [100, 75, 50], // Variable height.
             yPosMobile: [100, 50], // Variable height mobile.
             multipleSpeed: 999,
-            minSpeed: 8.5,
+            minSpeed: 0,
             minGap: 150,
             collisionBoxes: [
                 new CollisionBox(15, 15, 16, 5),
@@ -1848,14 +1848,14 @@
 
                 
                 // Apply jump scaling based on circadian rhythm and sleep pressure
-                let circadianEffect = 1 - (this.circadianRhythm / 100) * 0.1; // Max 10% reduction at circadian rhythm = 100
-                let sleepPressureEffect = 1 - (this.sleepPressure / 100) * 0.5; // Max 50% reduction at sleep pressure = 100
+                // let circadianEffect = 1 - (this.circadianRhythm / 100) * 0.1; // Max 10% reduction at circadian rhythm = 100
+                // let sleepPressureEffect = 1 - (this.sleepPressure / 100) * 0.5; // Max 50% reduction at sleep pressure = 100
         
-                // Final jump scaling factor is the product of both effects
-                let jumpScaleFactor = Math.min(circadianEffect * sleepPressureEffect, 1);
+                // // Final jump scaling factor is the product of both effects
+                // let jumpScaleFactor = Math.min(circadianEffect * sleepPressureEffect, 1);
         
                 // Tweak the jump velocity based on the scaling factor and the current speed.
-                this.jumpVelocity = (this.config.INIITAL_JUMP_VELOCITY - (speed / 10)) * jumpScaleFactor;
+                this.jumpVelocity = (this.config.INIITAL_JUMP_VELOCITY - (speed / 10)); // * jumpScaleFactor;
 
                 console.log(this.jumpVelocity)
 

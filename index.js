@@ -550,13 +550,21 @@
                 
                 // Calculate the maximum speed potential without reduction
                 let potentialSpeed = this.config.SPEED + (this.distanceRan / 1000); // Speed increases with distance ran
+
+                let sleepPressureEffectOnAcceleration = 1 - (this.sleepPressure / 100); 
                 
                 // Apply the debuff (reduce the potential max speed, but don’t slow down the player)
                 let maxAllowedSpeed = potentialSpeed * (1 - totalSpeedReduction);
-                
-                // Gradual acceleration based on how close the current speed is to the max allowed speed
-                let dynamicAcceleration = Math.max((maxAllowedSpeed - this.currentSpeed) * this.config.ACCELERATION, 0.01); // Ensure it's not zero
 
+                this.currentSpeed = Math.min(this.currentSpeed, maxAllowedSpeed);
+
+                let dynamicAcceleration = 0;
+                // Gradual acceleration based on how close the current speed is to the max allowed speed
+                if (this.sleepPressure > 50) {
+                    dynamicAcceleration = -1 * (maxAllowedSpeed - this.currentSpeed) * 0.001 * sleepPressureEffectOnAcceleration;
+                } else {
+                    dynamicAcceleration = (maxAllowedSpeed - this.currentSpeed) * 0.001 * sleepPressureEffectOnAcceleration;
+                }
 
                 this.canvasCtx.fillStyle = '#000';
                 this.canvasCtx.font = '16px Arial';
@@ -577,7 +585,7 @@
                     : 100 - ((circadianTime - 20000) / 20000) * 100; // Decreasing from 100 to 0
                 
                 // Increase sleep pressure by 2 per second
-                this.sleepPressure = Math.min(this.sleepPressure + deltaTime * 0.002, 100);
+                this.sleepPressure = Math.min(this.sleepPressure + deltaTime * 0.005, 100);
 
 
                 // First jump triggers the intro.

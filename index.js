@@ -554,10 +554,10 @@
                 var hasObstacles = this.runningTime > this.config.CLEAR_TIME;
 
                 // Update circadian rhythm (0 to 100 to 0 in a 20-second loop)
-                var circadianTime = this.runningTime % 20000; // 20 seconds = 20000 ms
-                this.circadianRhythm = circadianTime <= 10000 
-                    ? (circadianTime / 10000) * 100 // Increasing from 0 to 100
-                    : 100 - ((circadianTime - 10000) / 10000) * 100; // Decreasing from 100 to 0
+                var circadianTime = this.runningTime % 40000; // 20 seconds = 20000 ms
+                this.circadianRhythm = circadianTime <= 20000 
+                    ? (circadianTime / 20000) * 100 // Increasing from 0 to 100
+                    : 100 - ((circadianTime - 20000) / 20000) * 100; // Decreasing from 100 to 0
                 
                 // Increase sleep pressure by 2 per second
                 this.sleepPressure += deltaTime * 0.002; // 2 per second (deltaTime is in ms)

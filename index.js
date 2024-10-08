@@ -630,6 +630,10 @@
                     if (this.currentSpeed < this.config.MAX_SPEED) {
                         this.currentSpeed += dynamicAcceleration;
                     }
+
+                    if (this.currentSpeed < 4) { // Ensure the speed never drops below 4
+                        this.currentSpeed = 4;
+                    }
                 } else {
                     this.gameOver();
                 }

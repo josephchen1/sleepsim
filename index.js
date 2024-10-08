@@ -587,7 +587,7 @@
                     (checkObstacleType(this.horizon.obstacles[0]) == "PTERODACTYL");
                    
                 if (bedCollision) {
-                    tRex.sleepPressure = Math.max(0, tRex.sleepPressure - 30);
+                    this.sleepPressure = Math.max(0, this.sleepPressure - 30);
                     bedCollision == False; // Prevent negative values
                 }
                 

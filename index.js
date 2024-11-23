@@ -677,7 +677,7 @@
                 this.canvasCtx.font = '16px Arial';
                 this.canvasCtx.fillText(`Circadian Rhythm: ${this.formatCircadianTime(this.circadianRhythm)}`, 10, 20);
 
-                this.canvasCtx3.fillText('Sleep Pressure: ' + Math.floor(this.sleepPressure), 10, 40);
+                this.canvasCtx.fillText('Sleep Pressure: ' + Math.floor(this.sleepPressure), 10, 40);
 
                 if (this.tRex.jumping) {
                     this.tRex.updateJump(deltaTime);

@@ -658,6 +658,10 @@
                         reductionFactor = 3;
                     }
 
+                    if (this.sleepPressure >= 95 && (hour >= 23 && hour <= 7)) {
+                        reductionFactor = 10;
+                    }
+
                     // console.log(reductionFactor);
                 
                     // Apply negative acceleration with the combined effect of sleep pressure and circadian rhythm

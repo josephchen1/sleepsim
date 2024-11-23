@@ -20,6 +20,8 @@
 
         this.outerContainerEl = document.querySelector(outerContainerId);
         this.containerEl = null;
+        this.modalShown = false;
+        this.cModelShown = false;
         this.snackbarEl = null;
         this.detailsButton = this.outerContainerEl.querySelector('#details-button');
 
@@ -34,6 +36,9 @@
 
         this.distanceMeter = null;
         this.distanceRan = 0;
+
+        this.circadianRhythm = 0;
+        this.sleepPressure = 0;
 
         this.highestScore = 0;
 
@@ -230,8 +235,104 @@
         LOAD: 'load'
     };
 
-
     Runner.prototype = {
+        formatCircadianTime: function (circadianHour) {
+            const hour = Math.floor(circadianHour) % 24;
+            const period = hour < 12 ? 'AM' : 'PM';
+            const formattedHour = hour === 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+
+            return `${formattedHour} ${period}`;
+        },
+        /**
+         * Show the sleep pressure modal and pause the game.
+         */
+        showSleepModal: function () {
+            if (!this.modalShown) {
+                console.log('Showing sleep modal.');
+                const modal = document.getElementById('sleepModal');
+                modal.style.display = 'block';
+
+                // Pause the game
+                this.stop();
+
+                // Disable keydown listener
+                this.stopListening();
+
+                // Set the modalShown flag to true to prevent it from showing multiple times
+                this.modalShown = true;
+
+                // Set up the continue button click event
+                const continueButton = document.getElementById('continueButton');
+                continueButton.onclick = this.hideSleepModal.bind(this);
+            }
+        },
+
+        /**
+         * Hide the sleep pressure modal and resume the game.
+         */
+        hideSleepModal: function () {
+            console.log('Hiding sleep modal and resuming game.');
+            const modal = document.getElementById('sleepModal');
+            modal.style.display = 'none';
+
+            // Resume the game
+            this.play();
+
+            // Re-enable keydown listener
+            this.startListening();
+        },
+
+        showCircadianModal: function () {
+            if (!this.cModelShown) {
+                console.log('Showing circadian rhythm modal.');
+                const modal = document.getElementById('circadianModal');
+                modal.style.display = 'block';
+
+                // Pause the game
+                this.stop();
+
+                // Disable keydown listener
+                this.stopListening();
+
+                // Set the cModelShown flag to true
+                this.cModelShown = true;
+
+                // Set up the continue button click event
+                const continueButton = document.getElementById('circadianContinueButton');
+                continueButton.onclick = this.hideCircadianModal.bind(this);
+            }
+        },
+
+        hideCircadianModal: function () {
+            console.log('Hiding circadian rhythm modal and resuming game.');
+            const modal = document.getElementById('circadianModal');
+            modal.style.display = 'none';
+
+            // Resume the game
+            this.play();
+
+            // Re-enable keydown listener
+            this.startListening();
+        },
+
+        showGameOverOverlay: function () {
+            var overlay = document.getElementById('gameOverOverlay');
+            if (overlay) {
+                overlay.style.display = 'flex'; // Make the overlay visible
+            } else {
+                console.error('gameOverOverlay not found in the DOM.');
+            }
+        },
+
+        hideGameOverOverlay: function () {
+            var overlay = document.getElementById('gameOverOverlay');
+            if (overlay) {
+                overlay.style.display = 'none'; // Hide the overlay
+            } else {
+                console.error('gameOverOverlay not found in the DOM.');
+            }
+        },
+
         /**
          * Whether the easter egg has been disabled. CrOS enterprise enrolled devices.
          * @return {boolean}
@@ -538,12 +639,78 @@
             if (this.playing) {
                 this.clearCanvas();
 
+                // Calculate
+                let distanceFactor = Math.min(this.distanceRan / 50000, 1); // Scales from 0 to 1 over 2000 distance
+                let baseAcceleration = this.config.ACCELERATION + (0.004 * distanceFactor); // Acceleration increases gradually with distance
+                
+                // Initialize dynamic acceleration
+                let dynamicAcceleration = 0;
+                
+                // If sleep pressure is above 50, start applying negative acceleration
+                let hour = this.circadianRhythm % 24;
+                //console.log("hour" + String(hour))
+
+                if (this.sleepPressure > 60 || (hour >= 2 || hour <= 6)) {
+                    let reductionFactor = 1.3;
+                    
+                    // If both sleep pressure and circadian rhythm are high, double the negative acceleration
+                    if (this.sleepPressure > 60 && (hour >= 2 || hour <= 6)) {
+                        reductionFactor = 3;
+                    }
+
+                    // console.log(reductionFactor);
+                
+                    // Apply negative acceleration with the combined effect of sleep pressure and circadian rhythm
+                    dynamicAcceleration = -1 * reductionFactor * baseAcceleration;
+                } else {
+                    // Gradual acceleration towards maxAllowedSpeed
+                    dynamicAcceleration = baseAcceleration;
+                }
+
+                console.log(dynamicAcceleration);
+                
+
+                // Update the current speed by applying the calculated acceleration
+                this.currentSpeed += dynamicAcceleration;
+                
+                this.canvasCtx.fillStyle = '#000';
+                this.canvasCtx.font = '16px Arial';
+                this.canvasCtx.fillText(`Circadian Rhythm: ${this.formatCircadianTime(this.circadianRhythm)}`, 10, 20);
+
+                this.canvasCtx.fillText('Sleep Pressure: ' + Math.floor(this.sleepPressure), 10, 40);
+
                 if (this.tRex.jumping) {
                     this.tRex.updateJump(deltaTime);
                 }
 
                 this.runningTime += deltaTime;
                 var hasObstacles = this.runningTime > this.config.CLEAR_TIME;
+
+                // Update circadian rhythm (0 to 24 hours in a 40-second loop)
+                const circadianCycleDuration = 40000; // 40 seconds for a full 24-hour cycle
+                const circadianTime = this.runningTime % circadianCycleDuration;
+
+                // Map circadianTime to a 0-24 hour range
+                this.circadianRhythm = (circadianTime / circadianCycleDuration) * 24;
+
+                // Scale the value to represent a full 24-hour cycle (0 to 24 hours)
+                this.circadianRhythm *= 2;
+                
+                // Increase sleep pressure by 2 per second
+                this.sleepPressure = Math.min(this.sleepPressure + deltaTime * 0.005, 100);
+
+                // console.log('Current Sleep Pressure:', this.sleepPressure);
+                // console.log(this.circadianRhythm);
+
+                if (this.sleepPressure >= 100 && !this.modalShown && !this.paused) {
+                    console.log('Sleep pressure reached 100, showing modal.');
+                    this.showSleepModal();
+                }
+
+                if (this.circadianRhythm >= 24 && !this.cModelShown && !this.paused) {
+                    console.log('Circadian rhythm cycle complete, showing modal.');
+                    this.showCircadianModal();
+                }
 
                 // First jump triggers the intro.
                 if (this.tRex.jumpCount == 1 && !this.playingIntro) {
@@ -561,13 +728,34 @@
 
                 // Check for collisions.
                 var collision = hasObstacles &&
-                    checkForCollision(this.horizon.obstacles[0], this.tRex);
+                    checkForCollision(this.horizon.obstacles[0], this.tRex) && 
+                    ((checkObstacleType(this.horizon.obstacles[0]) == 'CACTUS_LARGE') || (checkObstacleType(this.horizon.obstacles[0]) == 'CACTUS_SMALL'));
+
+                var bedCollision = hasObstacles &&
+                     checkForCollision(this.horizon.obstacles[0], this.tRex) && 
+                    (checkObstacleType(this.horizon.obstacles[0]) == "PTERODACTYL");
+                   
+                if (bedCollision) {
+                    this.sleepPressure = Math.max(0, this.sleepPressure - 30);
+                    if (this.currentSpeed < this.config.SPEED) {
+                        this.currentSpeed = this.config.SPEED;
+                    }
+                    bedCollision = false; // Prevent negative values
+                }
+                
+                // console.log(bedCollision)
+                // console.log(this.currentSpeed);
+               //  console.log(dynamicAcceleration);
 
                 if (!collision) {
                     this.distanceRan += this.currentSpeed * deltaTime / this.msPerFrame;
 
                     if (this.currentSpeed < this.config.MAX_SPEED) {
-                        this.currentSpeed += this.config.ACCELERATION;
+                        this.currentSpeed += dynamicAcceleration;
+                    }
+
+                    if (this.currentSpeed < 4) { // Ensure the speed never drops below 4
+                        this.currentSpeed = 4;
                     }
                 } else {
                     this.gameOver();
@@ -672,6 +860,13 @@
          * @param {Event} e
          */
         onKeyDown: function (e) {
+
+            // Check if the modal is visible
+            const modal = document.getElementById('sleepModal');
+            const cModal = document.getElementById('circadianModal');
+            if ((modal && modal.style.display === 'block') || (cModal && cModal.style.display === 'block')) {
+                return; // Do nothing if the modal is visible
+            }
             // Prevent native page scrolling whilst tapping on mobile.
             if (IS_MOBILE && this.playing) {
                 e.preventDefault();
@@ -787,14 +982,14 @@
 
             this.tRex.update(100, Trex.status.CRASHED);
 
-            // Game over panel.
-            if (!this.gameOverPanel) {
-                this.gameOverPanel = new GameOverPanel(this.canvas,
-                    this.spriteDef.TEXT_SPRITE, this.spriteDef.RESTART,
-                    this.dimensions);
-            } else {
-                this.gameOverPanel.draw();
-            }
+            // // Game over panel.
+            // if (!this.gameOverPanel) {
+            //     this.gameOverPanel = new GameOverPanel(this.canvas,
+            //         this.spriteDef.TEXT_SPRITE, this.spriteDef.RESTART,
+            //         this.dimensions);
+            // } else {
+            //     this.gameOverPanel.draw();
+            // }
 
             // Update the high score.
             if (this.distanceRan > this.highestScore) {
@@ -804,6 +999,8 @@
 
             // Reset the time clock.
             this.time = getTimeStamp();
+
+            this.showGameOverOverlay();
         },
 
         stop: function () {
@@ -840,6 +1037,13 @@
                 this.playSound(this.soundFx.BUTTON_PRESS);
                 this.invert(true);
                 this.update();
+
+                // Reset the sleep pressure, circadian rhythm, and modalShown flag
+                this.sleepPressure = 0;
+                this.circadianRhythm = 0;
+                this.modalShown = false;
+                this.cModelShown = false;
+                this.hideGameOverOverlay();
             }
         },
         
@@ -971,6 +1175,19 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    function getWeightedRandomObstacle() {
+    // Generate a random number between 0 and 1
+        var randomValue = Math.random(); // Returns a value between 0 and 1
+    
+        // Assign probabilities based on ranges
+        if (randomValue < 0.8) {
+                return 1; // 70% chance for type 0
+            } else if (randomValue < 0.95) {
+                return 0; // 10% chance for type 1
+            } else {
+                return 2; // 20% chance for type 2
+        }
+    }
 
     /**
      * Vibrate on mobile devices.
@@ -1139,6 +1356,7 @@
      * @return {Array<CollisionBox>}
      */
     function checkForCollision(obstacle, tRex, opt_canvasCtx) {
+        //console.log(obstacle.typeConfig.type);
         var obstacleBoxXPos = Runner.defaultDimensions.WIDTH + obstacle.xPos;
 
         // Adjustments are made to the bounding box as there is a 1 pixel white
@@ -1190,6 +1408,9 @@
         return false;
     };
 
+    function checkObstacleType(obstacle) {
+        return obstacle.typeConfig.type;
+    }
 
     /**
      * Adjust the collision box.
@@ -1498,10 +1719,10 @@
             type: 'PTERODACTYL',
             width: 46,
             height: 40,
-            yPos: [100, 75, 50], // Variable height.
-            yPosMobile: [100, 50], // Variable height mobile.
+            yPos: [50], // Variable height.
+            yPosMobile: [50], // Variable height mobile.
             multipleSpeed: 999,
-            minSpeed: 8.5,
+            minSpeed: 0,
             minGap: 150,
             collisionBoxes: [
                 new CollisionBox(15, 15, 16, 5),
@@ -1788,8 +2009,20 @@
         startJump: function (speed) {
             if (!this.jumping) {
                 this.update(0, Trex.status.JUMPING);
-                // Tweak the jump velocity based on the speed.
-                this.jumpVelocity = this.config.INIITAL_JUMP_VELOCITY - (speed / 10);
+
+                
+                // Apply jump scaling based on circadian rhythm and sleep pressure
+                // let circadianEffect = 1 - (this.circadianRhythm / 100) * 0.1; // Max 10% reduction at circadian rhythm = 100
+                // let sleepPressureEffect = 1 - (this.sleepPressure / 100) * 0.5; // Max 50% reduction at sleep pressure = 100
+        
+                // // Final jump scaling factor is the product of both effects
+                // let jumpScaleFactor = Math.min(circadianEffect * sleepPressureEffect, 1);
+        
+                // Tweak the jump velocity based on the scaling factor and the current speed.
+                this.jumpVelocity = (this.config.INIITAL_JUMP_VELOCITY - (speed / 10)); // * jumpScaleFactor;
+
+                //console.log(this.jumpVelocity)
+
                 this.jumping = true;
                 this.reachedMinHeight = false;
                 this.speedDrop = false;
@@ -2676,7 +2909,8 @@
          * @param {number} currentSpeed
          */
         addNewObstacle: function (currentSpeed) {
-            var obstacleTypeIndex = getRandomNum(0, Obstacle.types.length - 1);
+            /** var obstacleTypeIndex = getRandomNum(0, Obstacle.types.length - 1); */
+            var obstacleTypeIndex = getWeightedRandomObstacle();
             var obstacleType = Obstacle.types[obstacleTypeIndex];
 
             // Check for multiples of the same type of obstacle.
@@ -2748,5 +2982,22 @@
 function onDocumentLoad() {
     new Runner('.interstitial-wrapper');
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    var restartButton = document.getElementById('restartButton');
+    if (restartButton) {
+        restartButton.addEventListener('click', function () {
+            var runnerInstance = Runner.instance_;
+            if (runnerInstance) {
+                runnerInstance.hideGameOverOverlay(); // Hide the overlay
+                runnerInstance.restart(); // Call the existing restart method
+            } else {
+                console.error('Runner instance not found.');
+            }
+        });
+    } else {
+        console.error('restartButton not found in the DOM.');
+    }
+});
 
 document.addEventListener('DOMContentLoaded', onDocumentLoad);

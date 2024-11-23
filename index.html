@@ -11,6 +11,20 @@
 </head>
 
 <body id="t" class="offline">
+    <div id="sleepModal" class="modal">
+        <div class="modal-content">
+            <h3>Warning: Sleep Pressure Maxed Out!</h3>
+            <p>The longer you stay awake, the more a chemical called adenosine builds up in your brain. This buildup creates a sense of "sleep pressure," which makes you feel increasingly tired. Adenosine acts as a signal for your body that it's time to rest. During sleep, adenosine levels decrease as it gets recycled, allowing you to wake up feeling refreshed and alert. Simply put, the more adenosine accumulates, the stronger the sleep pressure, making it easier to fall asleep when bedtime comes around. (Source: Yale School of Medicine)</p>
+            <button id="continueButton">Continue</button>
+        </div>
+    </div>
+    <div id="circadianModal" style="display: none;" class="modal">
+        <div class="modal-content">
+            <h3>Your first circadian cycle is complete!</h3>
+            <p>You've completed a full circadian rhythm cycle, which typically takes about 24 hours and 10 minutes for humans. According to Yale Medicine, the circadian drive, also known as the "awake drive," helps counteract sleepiness throughout the day. The lowest point of the circadian rhythm occurs between 2 AM and 6 AM, often referred to as the "window of circadian low." During this time, body temperature is at its lowest, and people are usually the sleepiest. Staying in sync with your circadian rhythm is vital for optimal health and alertness!</p>
+            <button id="circadianContinueButton">Continue</button>
+        </div>
+    </div>
     <div id="messageBox" class="sendmessage">
          <h1 style="text-align: center;font-family: 'Open Sans', sans-serif;">Press Space to start</h1>
          <div class="niokbutton" onclick="okbuttonsend()"></div>
@@ -29,16 +43,95 @@
             </template>
         </div>
     </div>
+    <div id="introOverlay" class="intro-overlay">
+    <h1>Welcome to the Circadian Rhythm Runner!</h1>
+    <p>
+        In this game, you'll navigate obstacles while balancing two key biological processes:
+        <br><br>
+        <strong>Process S (Sleep Pressure):</strong> Sleep pressure builds up as you stay awake, making it harder to maintain focus and speed. Jump into flying beds to "sleep" and reset your sleep pressure to stay in the game.
+        <br><br>
+        <strong>Process C (Circadian Rhythm):</strong> Your internal clock cycles between alertness and sleepiness throughout the day. Timing your jumps and movements according to these rhythms can give you an edge in avoiding obstacles.
+        <br><br>
+        <strong>Goal:</strong> Survive as long as possible while navigating obstacles and managing your body's sleep-wake cycle effectively.
+        <br><br>
+        - Use the <strong>Up Arrow</strong> or <strong>Spacebar</strong> to jump over obstacles.
+        <br>
+        - Look out for flying beds to restore your sleep pressure.
+        <br>
+        - Keep an eye on your circadian rhythm to maintain balance and avoid fatigue!
+        <br>
+        - Be mindful: high sleep pressure combined with low circadian rhythm points will severely reduce your speed, making it harder to avoid obstacles.
+        <br><br>
+        <u><strong>Press Space to start your journey toward mastering your sleep and rhythm!</strong></u>
+    </p>
+</div>
+
+<div id="gameOverOverlay" class="game-over-overlay">
+    <h1>Game Over!</h1>
+    <button id="restartButton">Restart Game</button>
+    <div id="learnBelow">
+        <p>
+        You've completed this round of the Circadian Rhythm Runner! 
+        <br>
+        <strong>Scroll down to explore the science behind your performance and strategies to optimize sleep and productivity. </strong>
+        </p>
+    </div>
+    <h2>Understanding the Science: Process C and Process S</h2>
+    <p>
+        Your in-game performance is influenced by two biological systems that regulate sleep and wakefulness:
+        <br><br>
+        - <strong>Process C (Circadian Rhythm):</strong> This 24-hour internal clock regulates the timing of sleep, wake cycles, and physiological processes like hormone production. It is synchronized by external cues such as light exposure and plays a critical role in maintaining alertness during the day and sleepiness at night.
+        <br><br>
+        - <strong>Process S (Sleep Pressure):</strong> This mechanism builds sleep pressure the longer you stay awake, driven by the accumulation of the molecule <strong>adenosine</strong> in the brain. During sleep, adenosine levels are cleared, alleviating sleep pressure. High sleep pressure combined with circadian misalignment impairs performance and focus.
+    </p>
+    <h2>The Role of Melatonin and Adenosine</h2>
+    <p>
+        - <strong>Melatonin:</strong> Produced by the pineal gland in response to darkness, this "sleep hormone" signals the body to prepare for rest. Exposure to artificial light, especially blue light, suppresses melatonin, delaying sleep onset and disrupting circadian rhythms.
+        <br><br>
+        - <strong>Adenosine:</strong> Accumulating during wakefulness, adenosine promotes sleep pressure. It is naturally cleared during sleep, allowing for cognitive and physical recovery. Caffeine temporarily blocks adenosine receptors, masking feelings of sleepiness without reducing the actual buildup.
+    </p>
+    <h2>Why Alignment Matters</h2>
+    <p>
+        The balance of Process C and Process S is essential for optimal health and performance:
+        <br><br>
+        - <strong>Disruption Consequences:</strong> Misalignment, such as staying awake late into the night or waking too early, reduces focus, slows reaction times, and negatively impacts overall health.
+        <br><br>
+        - <strong>Long-Term Impact:</strong> Chronic misalignment contributes to sleep disorders, mental health challenges, and increased risks for diseases like diabetes, obesity, and cardiovascular conditions.
+    </p>
+    <h2>Tips for Success</h2>
+    <ul>
+        <li><strong>Expose Yourself to Morning Sunlight:</strong> Start your day with natural light to reset your circadian rhythm.</li>
+        <li><strong>Limit Blue Light at Night:</strong> Avoid screens and bright lights 1-2 hours before bedtime.</li>
+        <li><strong>Stick to a Sleep Schedule:</strong> Go to bed and wake up at the same time every day, even on weekends.</li>
+        <li><strong>Avoid Late-Day Caffeine:</strong> Keep caffeine consumption to the morning hours to avoid disrupting sleep pressure.</li>
+        <li><strong>Practice Good Sleep Hygiene:</strong> Keep your bedroom cool, quiet, and dark for a better night’s sleep.</li>
+    </ul>
+    <h2>More Information</h2>
+    <p>
+        For additional resources on improving sleep and understanding circadian rhythms, check out these trusted sources:
+        <ul>
+            <li><a href="https://medicine.yale.edu/internal-medicine/pulmonary/news/national-sleep-week/good-sleep-recipe/" target="_blank">Yale Medicine: Good Sleep Recipe</a></li>
+            <li><a href="https://www.sleepfoundation.org/circadian-rhythm" target="_blank">Sleep Foundation: Circadian Rhythms</a></li>
+            <li><a href="https://sleep.hms.harvard.edu/education-training/public-education/sleep-and-health-education-program/sleep-health-education-48" target="_blank">Harvard Sleep Health Education Program</a></li>
+            <li><a href="https://www.health.harvard.edu/blog/why-your-sleep-and-wake-cycles-affect-your-mood-2020051319792" target="_blank">Harvard Health: Sleep Cycles and Mood</a></li>
+        </ul>
+    </p>
+</div>
+
+
 </body>
 
 <script>
     document.onkeydown = function(evt) {
-    evt = evt || window.event;
-    if (evt.keyCode == 32) {
-        var box = document.getElementById("messageBox");
-        box.style.visibility="hidden";
-    }
-};
+        evt = evt || window.event;
+        if (evt.keyCode == 32) {
+            var box = document.getElementById("messageBox");
+            box.style.visibility="hidden";
+            var intro = document.getElementById("introOverlay");
+            intro.style.visibility="hidden";
+        }
+    };
+
 </script>
     
 </html>

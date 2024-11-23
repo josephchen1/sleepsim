@@ -650,19 +650,21 @@
                 let hour = this.circadianRhythm % 24;
                 //console.log("hour" + String(hour))
 
-                if (this.sleepPressure > 60 || (hour >= 23 && hour <= 7)) {
+                if (this.sleepPressure > 60 || (hour >= 23 || hour <= 7)) {
                     let reductionFactor = 1.3;
                     
                     // If both sleep pressure and circadian rhythm are high, double the negative acceleration
-                    if (this.sleepPressure > 60 && (hour >= 23 && hour <= 7)) {
+                    if (this.sleepPressure > 70 && (hour >= 23 || hour <= 7)) {
                         reductionFactor = 3;
                     }
 
-                    if (this.sleepPressure >= 95 && (hour >= 23 && hour <= 7)) {
+                    if (this.sleepPressure >= 95 && (hour >= 23 || hour <= 7)) {
                         reductionFactor = 10;
                     }
 
-                    // console.log(reductionFactor);
+                    console.log("Reduction: " + String(reductionFactor));
+                    console.log("Pressure: " + String(this.sleepPressure));
+                    console.log("Hour: " + String(hour));
                 
                     // Apply negative acceleration with the combined effect of sleep pressure and circadian rhythm
                     dynamicAcceleration = -1 * reductionFactor * baseAcceleration;
@@ -671,7 +673,8 @@
                     dynamicAcceleration = baseAcceleration;
                 }
 
-                console.log(dynamicAcceleration);
+                console.log("Acceleration: " + String(dynamicAcceleration));
+                console.log("Speed: " + String(this.currentSpeed));
                 
 
                 // Update the current speed by applying the calculated acceleration

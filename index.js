@@ -650,11 +650,11 @@
                 let hour = this.circadianRhythm % 24;
                 //console.log("hour" + String(hour))
 
-                if (this.sleepPressure > 60 || (hour >= 2 || hour <= 6)) {
+                if (this.sleepPressure > 60 || (hour >= 2 && hour <= 6)) {
                     let reductionFactor = 1.3;
                     
                     // If both sleep pressure and circadian rhythm are high, double the negative acceleration
-                    if (this.sleepPressure > 60 && (hour >= 2 || hour <= 6)) {
+                    if (this.sleepPressure > 60 && (hour >= 2 && hour <= 6)) {
                         reductionFactor = 3;
                     }
 
@@ -677,7 +677,7 @@
                 this.canvasCtx.font = '16px Arial';
                 this.canvasCtx.fillText(`Circadian Rhythm: ${this.formatCircadianTime(this.circadianRhythm)}`, 10, 20);
 
-                this.canvasCtx.fillText('Sleep Pressure: ' + Math.floor(this.sleepPressure), 10, 40);
+                this.canvasCtx3.fillText('Sleep Pressure: ' + Math.floor(this.sleepPressure), 10, 40);
 
                 if (this.tRex.jumping) {
                     this.tRex.updateJump(deltaTime);

@@ -650,11 +650,11 @@
                 let hour = this.circadianRhythm % 24;
                 //console.log("hour" + String(hour))
 
-                if (this.sleepPressure > 60 || (hour >= 2 && hour <= 6)) {
+                if (this.sleepPressure > 60 || (hour >= 23 && hour <= 7)) {
                     let reductionFactor = 1.3;
                     
                     // If both sleep pressure and circadian rhythm are high, double the negative acceleration
-                    if (this.sleepPressure > 60 && (hour >= 2 && hour <= 6)) {
+                    if (this.sleepPressure > 60 && (hour >= 23 && hour <= 7)) {
                         reductionFactor = 3;
                     }
 
